@@ -1,0 +1,84 @@
+・ツイートの表示
+  ・モデルの作成
+    % rails g model tweet
+    #モデル名が間違えた場合は下記を実行
+    % rails d model モデル名
+  ・テーブルの作成
+    ・マイグレーションの編集(db/migrate/20XXXXXXXXXXXX_create_tweets.rb)
+      #4行目から追記
+      t.string :name
+      t.string :text
+      t.text :image
+    ・マイグレーションの実行
+      % rails db:migrate
+      ローカルサーバーの再起動
+      #マイグレーションの変種で誤記があった場合は下記を実行する
+      % rails db:rollback
+      #これの後に再度マイグレーションを実行する
+    ・コンソールでデータが保存されるかを確認する
+      ・コンソールでデータを保存
+        % rails c #下記コンソール
+        [1] pry(main)> Tweet.create(name: "takashi", text: "Nice to meet you!")
+        [2] pry(main)> Tweet.create(name: "ishi", text: "Hello world!")
+        [3] pry(main)> Tweet.create(name: "yabe", text: "railsへようこそ!")
+        [4] pry(main)> exit
+      ・データベース反映されているかを確認
+        Sequel Proで tweetsテーブルと値が追加されているか確認
+  ・投稿機能一覧を実装する
+    ・ルーティングを設定する(config/routes.rb)
+      Rails.application.routes.draw do
+        resources :tweets, only: :index #追記
+      end
+    ・tweetsコントローラーを作成
+      % rails g controller tweets
+      #コントローラー名を間違えた場合は下記を実行
+      % rails d controller コントローラー名
+    ・indexアクションをコントローラーに定義
+      ・コントローラーファイルに追記(app/controllers/tweets_controller.rb)
+        def index
+          @tweets = Tweet.all
+        end
+    ・投稿一覧のビューを作成
+      ・ビューファイルを作成(app/views/tweets/index.html.erb)
+      ・ビューファイルを編集する(index.html.erb)
+        <div class="contents row">
+          <% @tweets.each do |tweet| %>
+            <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+              <p><%= tweet.text %></p>
+              <span class="name">
+                <%= tweet.name %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      ・レイアウトの整形(app/views/layouts/application.html.erb)
+          # bodyとfooterに追記
+          <body>
+          <header class="header">
+            <div class="header__bar row">
+              <h1 class="grid-6"><a href="/">PicTweet</a></h1>
+              <div class="user_nav grid-6">
+                <a class="post" href="/tweets/new">投稿する</a>
+              </div>
+            </div>
+          </header>
+          <%= yield %>
+          <footer>
+            <p>
+              Copyright PicTweet 2019.
+            </p>
+          </footer>
+      ・CSSの適用
+        ・ファイルをダウンロードして以下のディレクトリに配置
+          https://drive.google.com/uc?export=download&id=1vpw72adJr1JICH3jzHBrhYHJX16IQ2Hy
+          app/assets/stylesheets/
+        ・画像ファイルをディレクトリに配置する
+          https://master.tech-camp.in/filedownload/9
+          app/assets/images/
+        ・サンプル画像が反映されるか確認する
+          https://tech-master.s3.amazonaws.com/uploads/curriculums/images/Rails1-4/sample.jpg
+          Sequel Proのimageカラムに上記をペーストしてhttp://localhost:3000/tweets アクセスする
+      ・ルートパスの設定
+        パスの設定を行う(config/routes.rb)
+          root to: 'tweets#index' #追記
+          resources :tweets, only: :index
