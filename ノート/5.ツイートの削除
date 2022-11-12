@@ -1,0 +1,6 @@
+・ツイートの削除
+  ・ツイート削除機能の実装
+    ・destroyアクションのルーティングの設定(config/routes.rb)
+      #下記に変更
+      resources :tweets, only: [:index, :new, :create, :destroy]
+  
