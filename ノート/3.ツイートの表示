@@ -1,0 +1,27 @@
+・ツイートの表示
+  ・モデルの作成
+    % rails g model tweet
+    #モデル名が間違えた場合は下記を実行
+    % rails d model モデル名
+  ・テーブルの作成
+    ・マイグレーションの編集(db/migrate/20XXXXXXXXXXXX_create_tweets.rb)
+      #4行目から追記
+      t.string :name
+      t.string :text
+      t.text :image
+    ・マイグレーションの実行
+      % rails db:migrate
+      ローカルサーバーの再起動
+      #マイグレーションの変種で誤記があった場合は下記を実行する
+      % rails db:rollback
+      #これの後に再度マイグレーションを実行する
+    ・コンソールでデータが保存されるかを確認する
+      ・コンソールでデータを保存
+        % rails c #下記コンソール
+        [1] pry(main)> Tweet.create(name: "takashi", text: "Nice to meet you!")
+        [2] pry(main)> Tweet.create(name: "ishi", text: "Hello world!")
+        [3] pry(main)> Tweet.create(name: "yabe", text: "railsへようこそ!")
+        [4] pry(main)> exit
+      ・データベース反映されているかを確認
+        Sequel Proで tweetsテーブルと値が追加されているか確認
+        
