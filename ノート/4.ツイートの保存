@@ -43,3 +43,5 @@
             def tweet_params
               params.require(:tweet).permit(:name, :image, :text)
             end
+  ・投稿完了ビューの作成
+  
