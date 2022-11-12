@@ -1,0 +1,11 @@
+・ライブラリの導入
+  ・Gemのバージョン変更と追加(Gemfile)
+    ・Gemfile内で、Gemであるmysql2のバージョンを0.5.3へ変更
+      # Use mysql as the database for Active Record
+      gem 'mysql2', '>= 0.4.4' #これを下記に変更
+      gem 'mysql2', '0.5.3'
+    ・Gemfile内で、Gemであるpry-railsを追加
+      gem 'pry-rails' #最終行に追記
+    ・更新とインストール
+      % bundle install
+      ローカルサーバーを再起動する
