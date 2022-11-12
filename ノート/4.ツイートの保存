@@ -1,0 +1,70 @@
+・ツイートを保存
+  ・ツイート投稿ページの実装
+    ・newアクションをルーティングを設定(config/routes.rb)
+      resources :tweets, only: [:index, :new] #に変更する
+    ・newアクションをコントローラーに定義
+      ・コントローラーを定義する(app/controllers/tweets_controller.rb)
+        #indexアクションの下に記述
+        def new
+          @tweet = Tweet.new
+        end
+  ・投稿ビューの作成
+    ・ビューファイルの作成(app/views/tweets)
+      new.html.erbファイルを作成
+    ・ビューファイルの編集(app/views/tweets/new.html.erb)
+      <div class="contents row">
+        <div class="container">
+          <h3>投稿する</h3>
+          <%= form_with(model: @tweet, local: true) do |form| %>
+            <%= form.text_field :name, placeholder: "Nickname" %>
+            <%= form.text_field :image, placeholder: "Image Url" %>
+            <%= form.text_area :text, placeholder: "text", rows: "10" %>
+            <%= form.submit "SEND" %>
+          <% end %>
+        </div>
+      </div>
+    ・ツイート投稿処理の実装
+      ・createアクションのルーティングを設定(config/routes.rb)
+        # 下記に変更する
+        resources :tweets, only: [:index, :new, :create]
+      ・フォームからデータ保存を実装
+        ・ストロングパラメーター
+        ・requireメソッド
+        ・permitメソッド
+          例 params.require(:モデル名).permit(:キー名, :キー名) # 取得したいキーを指定する
+        ・プライベートメソッド
+          コントローラーに"private"と記載すれば、以下の記述がプライベートメソッドに変わる
+        ・createアクションをコントローラーに定義(app/controllers/tweets_controller.rb)
+            #newアクションの下に記述
+            def create
+              Tweet.create(tweet_params)
+            end
+            private
+            def tweet_params
+              params.require(:tweet).permit(:name, :image, :text)
+            end
+  ・投稿完了ビューの作成
+    ・ビューファイルの作成(app/views/tweets)
+      create.html.erb を作成
+    ・ビュファイルーの編集(app/views/tweets/create.html.erb)
+      <div class="contents row">
+        <div class="success">
+          <h3>投稿が完了しました。</h3>
+          <a class="btn" href="/">投稿一覧へ戻る</a>
+        </div>
+      </div>
+  ・バリデーション
+    ・イントロ
+      ・バリデーション
+        データ登録に制限をかける
+          ・空のデータが登録できないようにする（今回のようなブログ記事など）
+          ・すでに登録されている文字列を登録できないようにする（メールアドレスの登録など）
+          ・文字数制限をかける（パスワードなど）
+      ・validatesメソッド
+        例 validates :カラム名, バリデーションの種類
+        例 validates :name, presence: true #presence: true でカラムが空ではないかというバリデーションを設けている
+    ・バリデーションを設定
+      ・バリデーションの設定を記述(app/models/tweet.rb)
+        class Tweet < ApplicationRecord
+          validates :text, presence: true
+        end
