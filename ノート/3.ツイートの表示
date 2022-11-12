@@ -24,4 +24,17 @@
         [4] pry(main)> exit
       ・データベース反映されているかを確認
         Sequel Proで tweetsテーブルと値が追加されているか確認
-        
+  ・投稿機能一覧を実装する
+    ・ルーティングを設定する(config/routes.rb)
+      Rails.application.routes.draw do
+        resources :tweets, only: :index #追記
+      end
+    ・tweetsコントローラーを作成
+      % rails g controller tweets
+      #コントローラー名を間違えた場合は下記を実行
+      % rails d controller コントローラー名
+    ・indexアクションをコントローラーに定義
+      ・コントローラーファイルに追記(app/controllers/tweets_controller.rb)
+        def index
+          @tweets = Tweet.all
+        end
