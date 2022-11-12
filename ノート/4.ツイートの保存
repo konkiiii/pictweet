@@ -1,0 +1,10 @@
+・ツイートを保存
+  ・ツイート投稿ページの実装
+    ・newアクションをルーティングする(config/routes.rb)
+      resources :tweets, only: [:index, :new] #に変更する
+    ・newアクションをコントトーラーに定義
+      ・コントローラーを定義する(app/controllers/tweets_controller.rb)
+        #indexアクションの下に記述
+        def new
+          @tweet = Tweet.new
+        end

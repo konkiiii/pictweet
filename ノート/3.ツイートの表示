@@ -82,3 +82,7 @@
         パスの設定を行う(config/routes.rb)
           root to: 'tweets#index' #追記
           resources :tweets, only: :index
+  ・ツイートを保存
+    ・newアクションをルーティングする
+      resources :tweets, only: [:index, :new] に変更する
+    ・
