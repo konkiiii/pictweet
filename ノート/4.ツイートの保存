@@ -52,4 +52,19 @@
           <h3>投稿が完了しました。</h3>
           <a class="btn" href="/">投稿一覧へ戻る</a>
         </div>
-      </div
+      </div>
+  ・バリデーション
+    ・イントロ
+      ・バリデーション
+        データ登録に制限をかける
+          ・空のデータが登録できないようにする（今回のようなブログ記事など）
+          ・すでに登録されている文字列を登録できないようにする（メールアドレスの登録など）
+          ・文字数制限をかける（パスワードなど）
+      ・validatesメソッド
+        例 validates :カラム名, バリデーションの種類
+        例 validates :name, presence: true #presence: true でカラムが空ではないかというバリデーションを設けている
+    ・バリデーションを設定
+      ・バリデーションの設定を記述(app/models/tweet.rb)
+        class Tweet < ApplicationRecord
+          validates :text, presence: true
+        end
