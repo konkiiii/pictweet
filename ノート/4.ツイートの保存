@@ -44,4 +44,12 @@
               params.require(:tweet).permit(:name, :image, :text)
             end
   ・投稿完了ビューの作成
-  
+    ・ビューファイルの作成(app/views/tweets)
+      create.html.erb を作成
+    ・ビュファイルーの編集(app/views/tweets/create.html.erb)
+      <div class="contents row">
+        <div class="success">
+          <h3>投稿が完了しました。</h3>
+          <a class="btn" href="/">投稿一覧へ戻る</a>
+        </div>
+      </div
