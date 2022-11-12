@@ -38,3 +38,44 @@
         def index
           @tweets = Tweet.all
         end
+    ・投稿一覧のビューを作成
+      ・ビューファイルを作成(app/views/tweets/index.html.erb)
+      ・ビューファイルを編集する(index.html.erb)
+        <div class="contents row">
+          <% @tweets.each do |tweet| %>
+            <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+              <p><%= tweet.text %></p>
+              <span class="name">
+                <%= tweet.name %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      ・レイアウトの整形(app/views/layouts/application.html.erb)
+          # bodyとfooterに追記
+          <body>
+          <header class="header">
+            <div class="header__bar row">
+              <h1 class="grid-6"><a href="/">PicTweet</a></h1>
+              <div class="user_nav grid-6">
+                <a class="post" href="/tweets/new">投稿する</a>
+              </div>
+            </div>
+          </header>
+          <%= yield %>
+          <footer>
+            <p>
+              Copyright PicTweet 2019.
+            </p>
+          </footer>
+      ・CSSの適用
+        ・ファイルをダウンロードして以下のディレクトリに配置
+          https://drive.google.com/uc?export=download&id=1vpw72adJr1JICH3jzHBrhYHJX16IQ2Hy
+          app/assets/stylesheets/
+        ・画像ファイルをディレクトリに配置する
+          https://master.tech-camp.in/filedownload/9
+          app/assets/images/
+        ・サンプル画像が反映されるか確認する
+          https://tech-master.s3.amazonaws.com/uploads/curriculums/images/Rails1-4/sample.jpg
+          Sequel Proのimageカラムに上記をペーストしてhttp://localhost:3000/tweets アクセスする
+      
