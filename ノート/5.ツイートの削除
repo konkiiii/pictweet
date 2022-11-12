@@ -3,4 +3,35 @@
     ・destroyアクションのルーティングの設定(config/routes.rb)
       #下記に変更
       resources :tweets, only: [:index, :new, :create, :destroy]
-  
+  ・削除ボタンを投稿一覧に追加する
+    ・ビューファイルの編集(app/views/tweets/index.html.erb)
+      <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+      #下記を編集する
+      <div class="more">
+        <span><%= image_tag 'arrow_top.png' %></span>
+        <ul class="more_list">
+          <li>
+            <%= link_to '削除', "/tweets/#{tweet.id}", method: :delete %>
+          </li>
+        </ul>
+      </div>
+      #ここまで
+      <p><%= tweet.text %></p>
+    ・イントロ
+      ・image_tag
+        image_tagとは、imgタグを生成するためのRailsのヘルパーメソッド
+        第一引数にapp/assets/images配下、もしくは、public配下の画像ファイルを指定
+        public配下の画像ファイルを指定する場合のみファイル名の前に/が必要
+        ・例 
+          <span><%= image_tag 'arrow_top.png' %></span>
+          => <span><img src="assets/arrow_top.png" /></span>
+      ・Prefix
+        link_toの指定先
+        ・例
+          # Prefix未使用
+          <%= link_to "link_button", '/', class: "header__title--text" %>
+          # Prefix使用
+          <%= link_to "link_button", root_path, class: "header__title--text" %>
+    ・確認
+      ・ボタンが表示されているか確認
+        http://localhost:3000/tweets
