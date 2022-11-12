@@ -78,4 +78,7 @@
         ・サンプル画像が反映されるか確認する
           https://tech-master.s3.amazonaws.com/uploads/curriculums/images/Rails1-4/sample.jpg
           Sequel Proのimageカラムに上記をペーストしてhttp://localhost:3000/tweets アクセスする
-      
+      ・ルートパスの設定
+        パスの設定を行う(config/routes.rb)
+          root to: 'tweets#index' #追記
+          resources :tweets, only: :index
