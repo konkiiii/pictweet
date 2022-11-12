@@ -35,3 +35,10 @@
     ・確認
       ・ボタンが表示されているか確認
         http://localhost:3000/tweets
+  ・destroyアクションをコントローラーに定義
+    ・コントローラーを編集(app/controllers/tweets_controller.rb)
+    # プライベートメソッドの上に記述
+      def destroy
+        tweet = Tweet.find(params[:id])
+        tweet.destroy
+      end
