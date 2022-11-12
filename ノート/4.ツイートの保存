@@ -1,8 +1,8 @@
 ・ツイートを保存
   ・ツイート投稿ページの実装
-    ・newアクションをルーティングする(config/routes.rb)
+    ・newアクションをルーティングを設定(config/routes.rb)
       resources :tweets, only: [:index, :new] #に変更する
-    ・newアクションをコントトーラーに定義
+    ・newアクションをコントローラーに定義
       ・コントローラーを定義する(app/controllers/tweets_controller.rb)
         #indexアクションの下に記述
         def new
@@ -23,4 +23,23 @@
           <% end %>
         </div>
       </div>
-      
+    ・ツイート投稿処理の実装
+      ・createアクションのルーティングを設定(config/routes.rb)
+        # 下記に変更する
+        resources :tweets, only: [:index, :new, :create]
+      ・フォームからデータ保存を実装
+        ・ストロングパラメーター
+        ・requireメソッド
+        ・permitメソッド
+          例 params.require(:モデル名).permit(:キー名, :キー名) # 取得したいキーを指定する
+        ・プライベートメソッド
+          コントローラーに"private"と記載すれば、以下の記述がプライベートメソッドに変わる
+        ・createアクションをコントローラーに定義(app/controllers/tweets_controller.rb)
+            #newアクションの下に記述
+            def create
+              Tweet.create(tweet_params)
+            end
+            private
+            def tweet_params
+              params.require(:tweet).permit(:name, :image, :text)
+            end
