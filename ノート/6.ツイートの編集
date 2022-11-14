@@ -1,0 +1,52 @@
+・ツイートの編集
+  ・編集ページの実装
+    ・editアクションのルーティングの設定(config/routes.rb)
+      resources :tweets, only: [:index, :new, :create, :destroy, :edit]
+    ・編集ボタンを投稿一覧に追加する(app/views/tweets/index.html.erb)
+       <ul class="more_list">
+        # 以下を追記
+          <li>
+            <%= link_to '編集', edit_tweet_path(tweet.id), method: :get %>
+          </li>
+        # ここまで
+          <li>
+            <%= link_to '削除', tweet_path(tweet.id), method: :delete %>
+          </li>
+    ・editアクションをコントローラーに定義(app/controllers/tweets_controller.rb)
+      # privateメソッドの上に記述
+      def edit
+        @tweet = Tweet.find(params[:id])
+      end
+  ・編集画面のビューを作成する
+    ・ビューファイルを作成する(app/views/tweets)
+      edit.html.erb ファイルを作成
+    ・ビューファイルを編集する(app/views/tweets/edit.html.erb)
+      <div class="contents row">
+        <div class="container">
+          <h3>編集する</h3>
+          <%= form_with(model: @tweet, local: true) do |form| %>
+            <%= form.text_field :name, placeholder: "Nickname" %>
+            <%= form.text_field :image, placeholder: "Image Url" %>
+            <%= form.text_area :text, placeholder: "text", rows: "10" %>
+            <%= form.submit "SEND" %>
+          <% end %>
+        </div>
+      </div>
+  ・ツイート更新処理の実装
+    ・updateアクションのルーティング実装(config/routes.rb)
+      resources :tweets, only: [:index, :new, :create, :destroy, :edit, :update]
+    ・updateアクションをコントローラ定義
+      def update
+        tweet = Tweet.find(params[:id])
+        tweet.update(tweet_params)
+      end
+  ・更新完了画面のビューを作成
+    ・ビューファイルを作成(app/views/tweets)
+      update.html.erb ファイルを作成
+    ・ビューファイルを編集(app/views/tweets/update/html.erb)
+      <div class="contents row">
+        <div class="success">
+          <h3>更新が完了しました。</h3>
+          <a class="btn" href="/">投稿一覧へ戻る</a>
+        </div>
+      </div>
