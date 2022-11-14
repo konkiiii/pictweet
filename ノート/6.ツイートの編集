@@ -32,4 +32,21 @@
           <% end %>
         </div>
       </div>
-    
+  ・ツイート更新処理の実装
+    ・updateアクションのルーティング実装(config/routes.rb)
+      resources :tweets, only: [:index, :new, :create, :destroy, :edit, :update]
+    ・updateアクションをコントローラ定義
+      def update
+        tweet = Tweet.find(params[:id])
+        tweet.update(tweet_params)
+      end
+  ・更新完了画面のビューを作成
+    ・ビューファイルを作成(app/views/tweets)
+      update.html.erb ファイルを作成
+    ・ビューファイルを編集(app/views/tweets/update/html.erb)
+      <div class="contents row">
+        <div class="success">
+          <h3>更新が完了しました。</h3>
+          <a class="btn" href="/">投稿一覧へ戻る</a>
+        </div>
+      </div>
