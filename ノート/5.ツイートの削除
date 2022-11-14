@@ -42,4 +42,13 @@
         tweet = Tweet.find(params[:id])
         tweet.destroy
       end
-    
+  ・削除完了画面のビューを作成
+    ・ビューファイルの作成(app/views/tweets)
+      destroy.html.erb ファイルを作成
+    ・ビューファイルの編集(app/views/tweets/destroy.html.erb)
+      <div class="contents row">
+        <div class="success">
+          <h3>削除が完了しました。</h3>
+          <a class="btn" href="/">投稿一覧へ戻る</a>
+        </div>
+      </div>
