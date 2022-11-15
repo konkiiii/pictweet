@@ -41,3 +41,25 @@
         </div>
       </div>
 
+・メソッドによるコード省略
+  ・コントローラーのコード省略(app/controllers/tweets_controller.rb)
+    editとshowの記述内容が同じなのでまとめる
+  ・before_actionメソッド
+    共通の処理が可能になる
+      例 before_action :処理させたいメソッド
+  ・コントローラーの編集
+    class TweetsController < ApplicationController
+      before_action :set_tweet, only: [:edit, :show] #追記
+    ~省略~
+    def edit
+    end
+    ~省略~
+    def show
+    end
+
+    private
+    ~省略~
+    def set_tweet
+      @tweet = Tweet.find(params[:id])
+    end
+
