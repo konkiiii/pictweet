@@ -6,4 +6,19 @@
       % bundle install
     ・確認する(サーバーを再起動)
       % rails s
-  ・
+  ・deviseの設定ファイルを作成する
+    ・コマンドでファイル作成
+      % rails g devise:install
+  ・deviseのUserモデルを作成
+    ・コマンドでUserモデルを作成する
+      % rails g devise user
+  ・テーブルの作成
+    ・マイグレーションファイルの編集(db/migrate/20XXXXXXXXX_devise_create_users.rb)
+      t.string :email,              null: false, default: ""
+      t.string :encrypted_password, null: false, default: ""
+      ~省略~
+      t.timestamps null: false
+      #上記の記述があることを確認
+    ・マイグレーションを実行する
+      % rails db:migrate
+    ・Sequel Proでusersテーブルを確認およびサーバーの再起動を行う
