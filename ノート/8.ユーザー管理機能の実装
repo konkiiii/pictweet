@@ -91,3 +91,25 @@
     ・マイグレーションの実行
       % rails db:migrate
     ・テーブルの確認(要サーバー再起動)
+  ・サインアップ画面の編集
+    ・イントロ
+      ・maxlengthオプション
+        例 <%= f.text_field :nickname, autofocus: true, maxlength: "6" %>
+      ・devise_parameter_sanitizerメソッド
+        deviseにおけるparamsのようなメソッド
+        例 devise_parameter_sanitizer.permit(:deviseの処理名, keys: [:許可するキー])
+    ・新規登録画面のビューを編集(app/views/devise/registrations/new.html.erb)
+      <%= render "devise/shared/error_messages", resource: resource %>
+      #以下を追記
+      <div class="field">
+        <%= f.label :nickname %> <em>(6 characters maximum)</em><br />
+        <%= f.text_field :nickname, autofocus: true, maxlength: "6" %>
+      </div>
+      #ここまで
+       <div class="field">
+    ・application_controller.rbを編集(app/controllers/application_controller.rb)
+      before_action :configure_permitted_parameters, if: :devise_controller?
+      private
+      def configure_permitted_parameters
+        devise_parameter_sanitizer.permit(:sign_up, keys: [:nickname])
+      end
