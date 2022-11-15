@@ -1,0 +1,9 @@
+・ユーザー管理機能の実装
+  ・deviseをインストールする
+    ・Gemfileを編集する
+      gem 'devise'
+    ・コマンドを実行してインストールする
+      % bundle install
+    ・確認する(サーバーを再起動)
+      % rails s
+  ・
