@@ -1,0 +1,43 @@
+・ツイートの詳細表示
+  ・詳細表示機能の実装
+    ・showアクションのルーティングの設定(config/routes.rb)
+      resources :tweets, only: [:index, :new, :create, :destroy, :edit, :update, :show]
+    ・resourcesの7つのアクションをまとめる上記を修正(config/routes.rb)
+      resources :tweets
+  ・詳細ボタンを投稿一覧に追加
+    ・ビューを編集(app/views/tweets/index.html.erb)
+      <ul class="more_list">
+        #下記を記載
+          <li>
+            <%= link_to '詳細', tweet_path(tweet.id), method: :get %>
+          </li>
+        #ここまで
+          <li>
+  ・showアクションをコントローラーに定義(app/controllers/tweets_controller.rb)
+    #プライベートメソッドの上
+    def show
+      @tweet = Tweet.find(params[:id])
+    end
+  ・詳細表示のビューを作成
+    ・ビューファイルを作成(app/views/tweets)
+      show.html.erbファイルを作成
+    ・ビューファイルの編集(app/views/tweets/show.html.erb)
+      <div class="contents row">
+        <div class="content_post" style="background-image: url(<%= @tweet.image %>);">
+          <div class="more">
+            <span><%= image_tag 'arrow_top.png' %></span>
+            <ul class="more_list">
+              <li>
+                <%= link_to '編集', edit_tweet_path(@tweet.id), method: :get %>
+              </li>
+              <li>
+                <%= link_to '削除', tweet_path(@tweet.id), method: :delete %>
+              </li>
+            </ul>
+          </div>
+          <p><%= @tweet.text %></p>
+          <span class="name"><%= @tweet.name %>
+          </span>
+        </div>
+      </div>
+
