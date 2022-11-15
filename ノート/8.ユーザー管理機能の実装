@@ -1,5 +1,6 @@
 ・ユーザー管理機能の実装
   ・deviseをインストールする
+    #以下ディレクトリに注意すること
     ・Gemfileを編集する
       gem 'devise'
     ・コマンドを実行してインストールする
@@ -84,4 +85,9 @@
           <% end %>
         </div>
       </div>
-  ・
+  ・サインアップ時の名前登録
+    ・usersテーブルnicknameカラムstring型で追加
+      % rails g migration AddNicknameToUsers nickname:string
+    ・マイグレーションの実行
+      % rails db:migrate
+    ・テーブルの確認(要サーバー再起動)
