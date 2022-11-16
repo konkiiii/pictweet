@@ -121,6 +121,7 @@
         ビューファイルを参照せずに別ページへリダイレクトできる
         例 redirect_to action: :リダイレクト先となるアクション名
       ・exceptオプション
+        指定したアクションは事前処理されない
     ・ログインの有無で表示を変える
       ・ビューを編集(app/views/layouts/application.html.erb)
         <div class="header__bar row">
