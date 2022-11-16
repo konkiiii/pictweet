@@ -113,3 +113,41 @@
       def configure_permitted_parameters
         devise_parameter_sanitizer.permit(:sign_up, keys: [:nickname])
       end
+  ・ログインの有無で処理を変える
+    ・イントロ
+      ・user_signed_in?メソッド
+        ユーザーがログインしていればtrue、ログアウトならfalse
+      ・redirect_toメソッド
+        ビューファイルを参照せずに別ページへリダイレクトできる
+        例 redirect_to action: :リダイレクト先となるアクション名
+      ・exceptオプション
+    ・ログインの有無で表示を変える
+      ・ビューを編集(app/views/layouts/application.html.erb)
+        <div class="header__bar row">
+          <h1 class="grid-6"><a href="/">PicTweet</a></h1>
+          #下記を追記
+          <% if user_signed_in? %>
+            <div class="user_nav grid-6">
+              <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+              <%= link_to "投稿する", new_tweet_path, class: "post" %>
+            </div>
+          <% else %>
+            <div class="grid-6">
+              <%= link_to "ログイン", new_user_session_path, class: "post" %>
+              <%= link_to "新規登録", new_user_registration_path, class: "post" %>
+            </div>
+          <% end %>
+          #ここまで
+        </div>
+      ・リダイレクト処理を用意する
+        ・コントローラーを編集(app/controllers/tweets_controller.rb)
+          before_action :set_tweet, only: [:edit, :show]
+          #下記を追記
+          before_action :move_to_index, except: [:index, :show]
+          ~省略~
+          #最後に記述(endの前)
+          def move_to_index
+            unless user_signed_in?
+              redirect_to action: :index
+            end
+          end
