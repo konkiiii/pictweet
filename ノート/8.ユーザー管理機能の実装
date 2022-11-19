@@ -1,0 +1,154 @@
+・ユーザー管理機能の実装
+  ・deviseをインストールする
+    #以下ディレクトリに注意すること
+    ・Gemfileを編集する
+      gem 'devise'
+    ・コマンドを実行してインストールする
+      % bundle install
+    ・確認する(サーバーを再起動)
+      % rails s
+  ・deviseの設定ファイルを作成する
+    ・コマンドでファイル作成
+      % rails g devise:install
+  ・deviseのUserモデルを作成
+    ・コマンドでUserモデルを作成する
+      % rails g devise user
+  ・テーブルの作成
+    ・マイグレーションファイルの編集(db/migrate/20XXXXXXXXX_devise_create_users.rb)
+      t.string :email,              null: false, default: ""
+      t.string :encrypted_password, null: false, default: ""
+      ~省略~
+      t.timestamps null: false
+      #上記の記述があることを確認
+    ・マイグレーションを実行する
+      % rails db:migrate
+    ・Sequel Proでusersテーブルを確認およびサーバーの再起動を行う
+  ・deviseのビュー作成
+    ・ビューファイルを作成する
+      % rails g devise:views
+    ・ログイン画面のビューを編集(app/views/devise/sessions/new.html.erb)
+      <div class="contents row">
+        <div class="container">
+          <h2>Log in</h2>
+          <%= form_with model: @user, url: user_session_path, id: 'new_user', class: 'new_user', local: true do |f| %>
+            <div class="field">
+              <%= f.label :email %><br />
+              <%= f.email_field :email, autofocus: true %>
+            </div>
+
+            <div class="field">
+              <%= f.label :password %><br />
+              <%= f.password_field :password, autocomplete: "off" %>
+            </div>
+
+            <% if devise_mapping.rememberable? %>
+              <div class="field">
+                <%= f.label :remember_me %><br />
+                <%= f.check_box :remember_me %>
+              </div>
+            <% end -%>
+
+            <div class="actions">
+              <%= f.submit "Log in" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    ・サインアップ画面の編集(app/views/devise/registrations/new.html.erb)
+      <div class="contents row">
+        <div class="container">
+          <h2>Sign up</h2>
+          <%= form_with model: @user, url: user_registration_path, id: 'new_user', class: 'new_user', local: true do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+
+            <div class="field">
+              <%= f.label :email %><br />
+              <%= f.email_field :email %>
+            </div>
+
+            <div class="field">
+              <%= f.label :password %>
+              <% if @minimum_password_length %>
+                <em>(<%= @minimum_password_length %> characters minimum)</em>
+              <% end %><br />
+              <%= f.password_field :password, autocomplete: "off" %>
+            </div>
+
+            <div class="field">
+              <%= f.label :password_confirmation %><br />
+              <%= f.password_field :password_confirmation, autocomplete: "off" %>
+            </div>
+
+            <div class="actions">
+              <%= f.submit "Sign up" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+  ・サインアップ時の名前登録
+    ・usersテーブルnicknameカラムstring型で追加
+      % rails g migration AddNicknameToUsers nickname:string
+    ・マイグレーションの実行
+      % rails db:migrate
+    ・テーブルの確認(要サーバー再起動)
+  ・サインアップ画面の編集
+    ・イントロ
+      ・maxlengthオプション
+        例 <%= f.text_field :nickname, autofocus: true, maxlength: "6" %>
+      ・devise_parameter_sanitizerメソッド
+        deviseにおけるparamsのようなメソッド
+        例 devise_parameter_sanitizer.permit(:deviseの処理名, keys: [:許可するキー])
+    ・新規登録画面のビューを編集(app/views/devise/registrations/new.html.erb)
+      <%= render "devise/shared/error_messages", resource: resource %>
+      #以下を追記
+      <div class="field">
+        <%= f.label :nickname %> <em>(6 characters maximum)</em><br />
+        <%= f.text_field :nickname, autofocus: true, maxlength: "6" %>
+      </div>
+      #ここまで
+       <div class="field">
+    ・application_controller.rbを編集(app/controllers/application_controller.rb)
+      before_action :configure_permitted_parameters, if: :devise_controller?
+      private
+      def configure_permitted_parameters
+        devise_parameter_sanitizer.permit(:sign_up, keys: [:nickname])
+      end
+  ・ログインの有無で処理を変える
+    ・イントロ
+      ・user_signed_in?メソッド
+        ユーザーがログインしていればtrue、ログアウトならfalse
+      ・redirect_toメソッド
+        ビューファイルを参照せずに別ページへリダイレクトできる
+        例 redirect_to action: :リダイレクト先となるアクション名
+      ・exceptオプション
+        指定したアクションは事前処理されない
+    ・ログインの有無で表示を変える
+      ・ビューを編集(app/views/layouts/application.html.erb)
+        <div class="header__bar row">
+          <h1 class="grid-6"><a href="/">PicTweet</a></h1>
+          #下記を追記
+          <% if user_signed_in? %>
+            <div class="user_nav grid-6">
+              <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+              <%= link_to "投稿する", new_tweet_path, class: "post" %>
+            </div>
+          <% else %>
+            <div class="grid-6">
+              <%= link_to "ログイン", new_user_session_path, class: "post" %>
+              <%= link_to "新規登録", new_user_registration_path, class: "post" %>
+            </div>
+          <% end %>
+          #ここまで
+        </div>
+      ・リダイレクト処理を用意する
+        ・コントローラーを編集(app/controllers/tweets_controller.rb)
+          before_action :set_tweet, only: [:edit, :show]
+          #下記を追記
+          before_action :move_to_index, except: [:index, :show]
+          ~省略~
+          #最後に記述(endの前)
+          def move_to_index
+            unless user_signed_in?
+              redirect_to action: :index
+            end
+          end
