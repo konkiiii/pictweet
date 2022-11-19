@@ -55,4 +55,11 @@
             <%= link_to "投稿する", new_tweet_path, class: "post" %>
           </div>
         <% else %>
-  ・
+  ・ユーザーに関するshowアクションを定義する
+    ・コントローラーの作成
+      % rails g controller users
+    ・コントローラーの編集(app/controllers/users_controller.rb)
+      def show
+        @nickname = current_user.nickname
+        @tweets = current_user.tweets
+      end
