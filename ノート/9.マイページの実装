@@ -1,0 +1,20 @@
+・マイページの実装
+  ・ツイートにユーザー情報を追加
+    特定のユーザーが呟いたツイート一覧を取得できる
+    ツイートの削除を行う際につぶやいた本人しか削除できないように設定できる
+    ・tweetsテーブルにカラムを追加する
+      tweetsテーブルにuser_idカラムをinteger型で追加
+      % rails g migration AddUserIdToTweets user_id:integer
+      % rails db:migrate
+      % rails s #サーバーの再起動
+  ・ツイート保存時にユーザー情報も追加する
+    ・イントロ
+      ・current_userメソッド
+        現在ログインしているユーザーの情報を取得できる
+      ・mergeメソッド
+        mergeメソッドを利用して、paramsとuser_idの情報を統合する
+        例params.~省略~.merge(user_id: current_user.id)
+    ・コントローラーに定義する(app/controllers/tweets_controller.rb)
+      def tweet_params
+        params.require(:tweet).permit(:name, :image, :text).merge(user_id: current_user.id)
+      end
