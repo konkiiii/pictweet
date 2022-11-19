@@ -63,3 +63,39 @@
         @nickname = current_user.nickname
         @tweets = current_user.tweets
       end
+  ・マイページのビューを作成する
+    ・ビューファイルを作成する(app/views/users)
+      show.html.erb ファイルを作成
+    ・ビューファイルの編集(app/views/users/show.html.erb)
+      <div class="contents row">
+        <p><%= @nickname %>さんの投稿一覧</p>
+        <% @tweets.each do |tweet| %>
+          <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+            <p><%= tweet.text %></p>
+            <span class="name"><%= tweet.name %></span>
+          </div>
+        <% end %>
+      </div>
+  ・投稿者となるユーザー名を表示
+    ・投稿者名を表示するようにビューを変更する(app/views/tweets/index.html.erb)
+      <span class="name">
+      #以下追記
+        <a href="/users/<%= tweet.user.id %>">
+          <span>投稿者</span><%= tweet.user.nickname %>
+        </a>
+      #ここまで
+      </span>
+      #この状態で確認するとエラーが出る
+        →user_idがNULLになっているので、usersテーブルから参照できない
+        Sequel Proでuser_idカラムに値を入力する
+    ・ビューファイル編集(app/views/tweets/show.html.erb)
+      <p><%= @tweet.text %></p>
+      #以下追記
+        <span class="name">
+          <a href="/users/<%= @tweet.user.id %>">
+            <span>投稿者</span><%= @tweet.user.nickname %>
+          </a>
+        </span>
+      #以下追記
+      </div>
+    ・
