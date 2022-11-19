@@ -16,5 +16,21 @@
         例params.~省略~.merge(user_id: current_user.id)
     ・コントローラーに定義する(app/controllers/tweets_controller.rb)
       def tweet_params
-        params.require(:tweet).permit(:name, :image, :text).merge(user_id: current_user.id)
+        params.require(:tweet).permit(:name, :image, :text).merge(user_id: current_user.id) #追記
       end
+  ・アソシエーション
+      モデル同士の関連付け
+    ・イントロ
+      ・has_manyメソッド
+        1対多のつながりを関連付ける
+        例 has_many :tweets
+      ・belongs_toメソッド
+        1対1の繋がりを関連付ける
+        例 belongs_to :user
+    ・アソシエーションの定義(app/models/user.rb)
+      devise :database_authenticatable, :registerable,
+            :recoverable, :rememberable, :validatable
+      has_many :tweets #追記
+    ・アソシエーションの定義(app/models/tweet.rb)
+      validates :text, presence: true
+      belongs_to :user
