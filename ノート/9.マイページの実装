@@ -34,3 +34,4 @@
     ・アソシエーションの定義(app/models/tweet.rb)
       validates :text, presence: true
       belongs_to :user
+    
