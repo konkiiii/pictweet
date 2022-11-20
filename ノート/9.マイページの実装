@@ -1,0 +1,138 @@
+・マイページの実装
+  ・ツイートにユーザー情報を追加
+    特定のユーザーが呟いたツイート一覧を取得できる
+    ツイートの削除を行う際につぶやいた本人しか削除できないように設定できる
+    ・tweetsテーブルにカラムを追加する
+      tweetsテーブルにuser_idカラムをinteger型で追加
+      % rails g migration AddUserIdToTweets user_id:integer
+      % rails db:migrate
+      % rails s #サーバーの再起動
+  ・ツイート保存時にユーザー情報も追加する
+    ・イントロ
+      ・current_userメソッド
+        現在ログインしているユーザーの情報を取得できる
+      ・mergeメソッド
+        mergeメソッドを利用して、paramsとuser_idの情報を統合する
+        例params.~省略~.merge(user_id: current_user.id)
+    ・コントローラーに定義する(app/controllers/tweets_controller.rb)
+      def tweet_params
+        params.require(:tweet).permit(:name, :image, :text).merge(user_id: current_user.id) #追記
+      end
+  ・アソシエーション
+      モデル同士の関連付け
+    ・イントロ
+      ・has_manyメソッド
+        1対多のつながりを関連付ける
+        例 has_many :tweets
+      ・belongs_toメソッド
+        1対1の繋がりを関連付ける
+        例 belongs_to :user
+    ・アソシエーションの定義(app/models/user.rb)
+      devise :database_authenticatable, :registerable,
+            :recoverable, :rememberable, :validatable
+      has_many :tweets #追記
+    ・アソシエーションの定義(app/models/tweet.rb)
+      validates :text, presence: true
+      belongs_to :user
+  ・マイページの作成
+    ・ユーザーに関するshowアクションのルーティングを設定(config/routes.rb)
+      resources :tweets
+      resources :users, only: :show #追記
+    ・マイページボタンを投稿一覧に追加する
+      ・ビューの編集(app/views/layouts/application.html.erb)
+        <% if user_signed_in? %>
+          <div class="user_nav grid-6">
+        #下記を追記する
+            <span><%= current_user.nickname %>
+              <ul class="user__info">
+                <li>
+                  <%= link_to "マイページ", "/users/#{current_user.id}" %>
+                  <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+                </li>
+              </ul>
+            </span>
+        ＃ここまで
+            <%= link_to "投稿する", new_tweet_path, class: "post" %>
+          </div>
+        <% else %>
+  ・ユーザーに関するshowアクションを定義する
+    ・コントローラーの作成
+      % rails g controller users
+    ・コントローラーの編集(app/controllers/users_controller.rb)
+      def show
+        @nickname = current_user.nickname
+        @tweets = current_user.tweets
+      end
+  ・マイページのビューを作成する
+    ・ビューファイルを作成する(app/views/users)
+      show.html.erb ファイルを作成
+    ・ビューファイルの編集(app/views/users/show.html.erb)
+      <div class="contents row">
+        <p><%= @nickname %>さんの投稿一覧</p>
+        <% @tweets.each do |tweet| %>
+          <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+            <p><%= tweet.text %></p>
+            <span class="name"><%= tweet.name %></span>
+          </div>
+        <% end %>
+      </div>
+  ・投稿者となるユーザー名を表示
+    ・投稿者名を表示するようにビューを変更する(app/views/tweets/index.html.erb)
+      <span class="name">
+      #以下追記
+        <a href="/users/<%= tweet.user.id %>">
+          <span>投稿者</span><%= tweet.user.nickname %>
+        </a>
+      #ここまで
+      </span>
+      #この状態で確認するとエラーが出る
+        →user_idがNULLになっているので、usersテーブルから参照できない
+        Sequel Proでuser_idカラムに値を入力する
+    ・ビューファイル編集(app/views/tweets/show.html.erb)
+      <p><%= @tweet.text %></p>
+      #以下追記
+        <span class="name">
+          <a href="/users/<%= @tweet.user.id %>">
+            <span>投稿者</span><%= @tweet.user.nickname %>
+          </a>
+        </span>
+      #以下追記
+      </div>
+  ・ツイートからユーザー情報も先に読み込む
+    ・イントロ
+      ・N+1問題
+        アソシエーションを利用した場合に限り、データベースへのアクセス回数が多くなってしまう問題
+      ・includesメソッド
+        引数に指定された関連モデルを1度のアクセスでまとめて取得できる
+        例 モデル名.includes(:紐付くモデル名)
+    ・コントローラーの編集(app/controllers/tweets_controller.rb)
+      def index
+        @tweets = Tweet.includes(:user)
+      end
+    ・投稿画面のビューを編集する(app/views/tweets/new.html.erb),(app/views/tweets/edit.html.erb)
+      <h3>投稿する</h3>(,<h3>編集する</h3>)
+      # 下記の1行削除
+      <%= form.text_field :name, placeholder: "Nickname" %>
+    ・投稿時の処理を変更する(app/controllers/tweets_controller.rb)
+      private
+        def tweet_params
+          #下記1行を編集
+          params.require(:tweet).permit(:image, :text).merge(user_id: current_user.id)
+        end
+    ・tweetsテーブルからnameカラムを削除する
+      % rails g migration RemoveNameFromTweets name:string
+      % rails db:migrate
+      % rails s
+    ・ビューを編集(app/views/users/show.html.erb)
+      <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+        <p><%= tweet.text %></p>
+        #下記の1行削除
+        <span class="name"><%= tweet.name %></span>
+      </div>
+    ・投稿者のマイページにアクセスできるようにする
+      ・コントローラーを編集する(app/controllers/users_controller.rb)
+        def show
+          user = User.find(params[:id])
+          @nickname = user.nickname
+          @tweets = user.tweets
+        end
