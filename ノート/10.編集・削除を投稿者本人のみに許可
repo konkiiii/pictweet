@@ -1,0 +1,12 @@
+・編集・削除を投稿者本人のみに許可
+  ・投稿者本人か確認して表示を変える
+    ・ビューの編集(app/views/tweets/index.html.erb)
+      #10行目に追記(新規)
+        <% if user_signed_in? && current_user.id == tweet.user_id %>
+      #17行目に追記(新規)
+        <% end %>
+    ・ビューの編集(app/views/tweets/show.html.erb)
+    #3行目に追記(新規)
+      <% if user_signed_in? && current_user.id == @tweet.user_id %>
+    #15行目に追記(新規)
+      <% end %>
