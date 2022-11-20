@@ -1,0 +1,13 @@
+・表示順の変更
+  ・イントロ
+    ・orderメソッド
+      並び順を変更するメソッド
+      例 インスタンス = モデル名.order("並び替えの基準となるカラム名 並び順")
+        ASC:昇順
+        DESC:降順
+  ・ツイート順の変更
+    ・コントローラーの変更(app/controllers/tweets_controller.rb)
+      def index
+      #下記1行追記
+        @tweets = Tweet.includes(:user).order("created_at DESC")
+      end
