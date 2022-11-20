@@ -15,6 +15,7 @@
         <h1 class="grid-6"><a href="/">PicTweet</a></h1>
         <% if user_signed_in? %>
           <div class="user_nav grid-6">
+              <%= link_to "投稿する", new_tweet_path, class: "post" %>
             <span><%= current_user.nickname %>
             <ul class="user__info">
               <li>
