@@ -1,0 +1,72 @@
+・部分テンプレート
+  ・イントロ
+    ・_xxx.html.erb
+      部分テンプレートのファイル名
+    ・renderメソッド
+      部分テンプレートを呼び出す際に使用するメソッド
+    ・partialオプション
+      renderメソッドで使用できるメソッド
+      例 <% render partial: "sample" %>
+    ・localsオプション
+      renderメソッドで使用できるメソッド
+      例 <% render partial: "sample", locals: { post: "hello!" } %>
+  ・ビューをまとめる
+    ・部分テンプレートファイルの作成(app/views/tweets)
+      _tweet.html.erb ファイルの作成
+    ・部分テンプレートの編集
+      #下記の部分を app/views/tweets/index.html.erb→_tweet.html.erb に切り取って追記
+        <div class="content_post" style="background-image: url(<%= tweet.image %>);">
+          <div class="more">
+            <span><%= image_tag 'arrow_top.png' %></span>
+            <ul class="more_list">
+              <li>
+                <%= link_to '詳細', tweet_path(tweet.id), method: :get %>
+              </li>
+              <% if user_signed_in? && current_user.id == tweet.user_id %>
+                <li>
+                  <%= link_to '編集', edit_tweet_path(tweet.id), method: :get %>
+                </li>
+                <li>
+                  <%= link_to '削除', tweet_path(tweet.id), method: :delete %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+          <p><%= tweet.text %></p>
+          <span class="name">
+            <a href="/users/<%= tweet.user.id %>">
+              <span>投稿者</span><%= tweet.user.nickname %>
+            </a>
+          </span>
+        </div>
+    ・部分テンプレートを呼び出せるようにする(app/views/tweets/index.html.erb)
+      <% @tweets.each do |tweet| %>
+      #下記の1行を追記
+        <%= render partial: "tweet", locals: { tweet: tweet } %>
+      <% end %>
+    ・部分テンプレートを呼び出せるようにする(app/views/users/show.html.erb)
+      <% @tweets.each do |tweet| %>
+      #下記の1行を追記
+        <%= render partial: "tweets/tweet", locals: { tweet: tweet } %>
+      <% end %>
+  ・フォーム部分をまとめる
+    ・部分テンプレートファイルの作成(app/views/tweets)
+      _form.html.erb ファイルを作成
+    ・部分テンプレートの編集
+      #下記を app/views/tweets/_form.html.erb→_form.html.erb に移動
+      <%= form_with(model: @tweet, local: true) do |form| %>
+        <%= form.text_field :image, placeholder: "Image Url" %>
+        <%= form.text_area :text, placeholder: "text", rows: "10" %>
+        <%= form.submit "SEND" %>
+      <% end %>
+      #さらに1行目を変更
+      <%= form_with(model: tweet, local: true) do |form| %>
+    ・部分テンプレートの呼び出し(app/views/tweets/new.html.erb)
+      <h3>投稿する</h3> 
+      #下記を編集
+      <%= render partial: "form", locals: { tweet: @tweet } %>
+    ・部分テンプレートの呼び出し(app/views/tweets/edit.html.erb)
+        <h3>編集する</h3>
+      #下記の1行を編集
+        <%= render partial: "form", locals: { tweet: @tweet } %>
+      </div>
