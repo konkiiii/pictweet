@@ -11,4 +11,24 @@
       % rails db:migrate
     ・サーバーの再起動
       % rails s
-    
+  ・アソシエーションの定義
+    ・モデルの編集(app/models/comment.rb)
+      belongs_to :tweet
+      belongs_to :user
+    ・モデルの編集(app/models/tweet.rb)
+      #下記を追記
+      has_many :comments
+    ・モデルの編集(app/models/user.rb)
+      #下記を追記
+      has_many :comments
+  ・createアクションのルーティングを設定
+    ・ルーティングの設定(config/routes.rb)
+      #ネストしてルーティングを記述することに注意
+       do~endで挟むことにより、ルーティング記述をネストできる
+      root to: 'tweets#index'
+      #下記を追記
+      resources :tweets do
+        resources :comments, only: :create
+      end
+      #ここまで
+      resources :users, only: :show
