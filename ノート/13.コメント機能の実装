@@ -45,4 +45,33 @@
       def comment_params
         params.require(:comment).permit(:text).merge(user_id: current_user.id, tweet_id: params[:tweet_id])
       end
+  ・コメント投稿フォームの作成
+    ・ビューファイルの編集(app/views/tweets/show.html.erb)
+      #最後の</div>~</・div>に記載する
+      <div class="container">
+        <% if user_signed_in? %>
+          <%= form_with(model: [@tweet, @comment], local: true) do |form| %>
+            <%= form.text_area :text, placeholder: "コメントする", rows: "2" %>
+            <%= form.submit "SEND" %>
+          <% end %>
+        <% else %>
+          <strong><p>※※※ コメントの投稿には新規登録/ログインが必要です ※※※</p></strong>
+        <% end %>
+      </div>
+  ・コメント表示欄を投稿詳細に追加する
+    ・コントローラーを編集する(app/controllers/tweets_controller.rb)
+      # def show ~ end を下記に変更する
+      @comment = Comment.new
+      @comments = @tweet.comments.includes(:user)
+    ・ビューファイルの編集(app/views/tweets/show.html.erb)
+      #<% end %>~最後から2番目の</div>の間に追記
+      <div class="comments">
+        <h4>＜コメント一覧＞</h4>
+        <% @comments.each do |comment| %>
+          <p>
+            <strong><%= link_to comment.user.nickname, "/users/#{comment.user_id}" %>：</strong>
+            <%= comment.text %>
+          </p>
+        <% end %>
+      </div>
 
