@@ -1,0 +1,14 @@
+・コメント機能の実装
+  ・Commentモデルの作成
+    ・コマンド実行
+      % rails g model comment
+    ・マイグレーションの編集(db/migrate/20XXXXXXXXXXXX_create_comments.rb)
+      #下記を追記
+      t.integer :user_id
+      t.integer :tweet_id
+      t.text :text
+    ・マイグレーションの実行
+      % rails db:migrate
+    ・サーバーの再起動
+      % rails s
+    
