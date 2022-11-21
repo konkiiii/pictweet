@@ -32,3 +32,17 @@
       end
       #ここまで
       resources :users, only: :show
+  ・コントローラーの作成
+    ・commmetsコントローラーを作成する
+      % rails g controller comments
+    ・createアクションをコントローラーに定義する(app/controllers/comments_controller.rb)
+      #下記を追記
+      def create
+        comment = Comment.create(comment_params)
+        redirect_to "/tweets/#{comment.tweet.id}"
+      end
+      private
+      def comment_params
+        params.require(:comment).permit(:text).merge(user_id: current_user.id, tweet_id: params[:tweet_id])
+      end
+
